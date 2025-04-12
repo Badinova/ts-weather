@@ -1,22 +1,37 @@
-import {FormEvent} from "react";
+import { FormEvent } from "react";
+import { useAppDispatch } from "../hooks";
+import { setWeather, setError } from "../features/weather/weatherSlice";
+import { api_key, base_url } from "../utils/constants";
 
-interface Props{
-    getWeather: (city: string) => void;
-}
+const Form = () => {
+    const dispatch = useAppDispatch();
 
-const Form = ({getWeather}: Props) => {
-
-    const handelGetWeather = (e: FormEvent<HTMLFormElement>) => {
+    const handleGetWeather = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         const city = e.currentTarget.city.value.trim();
-        getWeather(city);
 
-    }
+        if (!city) return;
+
+        try {
+            const res = await fetch(`${base_url}?q=${city}&appid=${api_key}&units=metric`);
+            const data = await res.json();
+
+            dispatch(setWeather({
+                city: data.name,
+                country: data.sys.country,
+                temp: data.main.temp,
+                pressure: data.main.pressure,
+                sunset: data.sys.sunset,
+            }));
+        } catch (err) {
+            dispatch(setError('Enter correct city name'));
+        }
+    };
 
     return (
-        <form onSubmit={handelGetWeather}>
-            <input type={'text'} name={'city'}/>
-            <button type={'submit'}>Get Weather</button>
+        <form onSubmit={handleGetWeather}>
+            <input type="text" name="city" />
+            <button type="submit">Get Weather</button>
         </form>
     );
 };
