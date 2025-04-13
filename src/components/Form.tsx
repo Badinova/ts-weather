@@ -8,9 +8,8 @@ const Form = () => {
     const handleGetWeather = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         const city = e.currentTarget.city.value.trim();
-        if (city) {
-            dispatch(getWeather(city));
-        }
+        if (city) dispatch(getWeather(city));
+
     };
 
     return (

@@ -1,5 +1,5 @@
-import {createAsyncThunk, createSlice, PayloadAction} from '@reduxjs/toolkit';
-import { WeatherInfo } from '../../utils/types';
+import {createAsyncThunk, createSlice} from '@reduxjs/toolkit';
+import {WeatherInfo} from '../../utils/types';
 import {api_key, base_url} from "../../utils/constants.ts";
 
 interface WeatherState {
@@ -43,17 +43,18 @@ export const getWeather = createAsyncThunk<
 const weatherSlice = createSlice({
     name: 'weather',
     initialState,
-    reducers: {
-        setWeather: (state, action: PayloadAction<Partial<WeatherInfo>>) => {
-            state.weather = action.payload;
-            state.message = '';
-        },
-        setError: (state, action: PayloadAction<string>) => {
-            state.message = action.payload;
-            state.weather = {};
-        },
+    reducers: {},
+    extraReducers: (builder) => {
+        builder
+            .addCase(getWeather.fulfilled, (state, action) => {
+                state.weather = action.payload;
+                state.message = '';
+            })
+            .addCase(getWeather.rejected, (state, action) => {
+                state.message = action.payload || 'Error';
+                state.weather = {};
+            });
     },
 });
 
-export const { setWeather, setError } = weatherSlice.actions;
 export default weatherSlice.reducer;

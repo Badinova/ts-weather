@@ -4,7 +4,7 @@ const Weather = () => {
     const {weather, message} = useAppSelector((state) => state.weather);
     return (
         <div className={'infoWeath'}>
-            {!message && weather.city &&(
+            {!message &&(
                 <>
                     <p>Location: {weather.country}, {weather.city}</p>
                     <p>Temp: {weather.temp}</p>
